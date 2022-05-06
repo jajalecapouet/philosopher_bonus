@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: njaros <njaros@student.42lyon.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/06 11:11:22 by njaros            #+#    #+#             */
+/*   Updated: 2022/05/06 18:37:04 by njaros           ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #ifndef PHILO_BONUS_H
 # define PHILO_BONUS_H
@@ -22,23 +34,48 @@ typedef struct law
 	int				time_to_sleep;
 	int				time_to_eat;
 	int				eat_number;
-}	law;
+	int				usleep_val;
+	sem_t			*write;
+	sem_t			*forks;
+	sem_t			*remaining;
+	sem_t			*die;
+	struct timeval	start;
+}	t_law;
+
+typedef	struct s_time
+{
+	struct timeval	start;
+	struct timeval	last_eat;
+	struct timeval	current;
+	t_law			*law;
+	int				n;
+}	t_time;
+
 
 // Corps du programme
 
-int		error(int err);
 int		main(int ac, char **av);
-void	fork_handler(void);
+int		philo_bonus(t_law law);
+void	philo_handler(t_law law, int n);
+int		lets_fork_the_phils(t_law law);
+int		je_mange(int n, t_time *tps, t_law *law);
+int		j_ai_fini(t_law *law, t_time *tps, int n);
+void	je_dors(int n, t_time *tps, t_law *law);
+int		keskifou(sem_t *write, t_time *tps, int philo, char *str);
+int		error(int err);
+
+// Outils utiles
+
+int		ms(struct timeval t1, struct timeval t2);
+int		us(struct timeval t1, struct timeval t2);
+void	init_time(t_time *tps, t_law *law, int n);
 
 // Fonctions de mise en place
 
-int		parsing(char **to_parse, law *to_fill);
-sem_t	**init_semafork(int size, char **names);
-char	**init_fork_names(int size);
+int		parsing(char **to_parse, t_law *to_fill);
+int		init_sem(t_law *law);
 
 // Fonctions de destruction
-
-int		freestyle(char **strs, int err);
 
 // Fonctions de la libft
 

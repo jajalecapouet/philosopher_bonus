@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: njaros <njaros@student.42lyon.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/06 15:40:11 by njaros            #+#    #+#             */
+/*   Updated: 2022/05/06 17:43:09 by njaros           ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo_bonus.h"
 
@@ -20,7 +31,7 @@ int	error(int err)
 
 int	main(int ac, char **av)
 {
-	struct law	law;
+	t_law		law;
 	int			err;
 
 	if (ac < 5 || ac > 6)
@@ -28,45 +39,50 @@ int	main(int ac, char **av)
 	err = parsing(&av[1], &law);
 	if (err)
 		return (error(err));
+	err = init_sem(&law);
+	if (err)
+		return (error(err));
+	if (!law.philo_number || !law.eat_number)
+		return (0);
 	return (error(philo_bonus(law)));
 }
 
-int	philo_bonus(law law)
+void	*meal_counter_handler(void *arg)
 {
-	sem_t	**semafork;
-	char	**fork_names;
+	t_law	*law;
+	int		count;
 
-	i = -1;
-	fork_names = init_fork_names(law.philo_number);
-	if (!fork_names)
-		return (11);
-	semafork = init_semaphork(law.philo_number, fork_names);
-	if (!semafork)
-		return (freestyle(fork_name, 11));
-	return (lets_fork_the_phils(fork_names, semafork, law));
+	law = arg;
+	count = law->philo_number;
+	while (--count >= 0)
+		sem_wait(law->remaining);
+	kill(0, SIGINT);
+	return (NULL);
 }
 
-int	lets_fork_the_phils(char **fork_names, sem_t **semafork, law law)
+int	philo_bonus(t_law law)
+{
+	pthread_t	meal_counter;
+
+	pthread_create(&meal_counter, NULL, meal_counter_handler, &law);
+	return (lets_fork_the_phils(law));
+}
+
+int	lets_fork_the_phils(t_law law)
 {
 	pid_t	pid[law.philo_number];
 	int		i;
 	int		ret;
 
 	i = -1;
+	gettimeofday(&law.start, NULL);
 	while (++i < law.philo_number)
 	{
 		pid[i] = fork();
 		if (pid[i] == 0)
-			philo_handler(law, semafork, fork_names, i);
+			philo_handler(law, i);
 	}
-	while (--i >= 0)
-	{
-		waitpid(-1, &ret, NULL);
-		if (WEXISTATUS(ret))
-		{
-			kill(0, SIGINT);
-			return (0);
-		}
-	}
+	waitpid(-1, &ret, 0);
+	kill(0, SIGINT);
 	return (0);
 }

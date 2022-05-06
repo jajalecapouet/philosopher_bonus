@@ -6,7 +6,7 @@
 #    By: njaros <njaros@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/03 10:44:06 by njaros            #+#    #+#              #
-#    Updated: 2022/05/03 19:15:30 by njaros           ###   ########lyon.fr    #
+#    Updated: 2022/05/06 17:39:14 by njaros           ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,8 @@ PATH_OBJS = obj
 PATH_INCLUDES = includes
 
 LST_SRCS =	philo_bonus.c \
+			philo_utils.c \
+			time_utils.c \
 			mem_build.c \
 			libft_fcts.c \
 			libft_fcts2.c \
