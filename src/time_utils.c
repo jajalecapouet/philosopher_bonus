@@ -6,7 +6,7 @@
 /*   By: njaros <njaros@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:44:00 by njaros            #+#    #+#             */
-/*   Updated: 2022/05/06 18:33:52 by njaros           ###   ########lyon.fr   */
+/*   Updated: 2022/05/09 09:04:39 by njaros           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ int	keskifou(sem_t *write, t_time *tps, int philo, char *str)
 	return (0);
 }
 
-void	init_time(t_time *tps, t_law *law, int n)
+void	init_time(t_time *tps, t_data *data, int n)
 {
 	gettimeofday(&tps->current, NULL);
 	gettimeofday(&tps->last_eat, NULL);
-	tps->start = law->start;
-	tps->law = law;
+	tps->start = data->start;
+	tps->data = data;
 	tps->n = n;
 	if (n % 2 == 1)
-		usleep(law->philo_number * 100);
+		usleep(data->usleep_val * 4);
 }
