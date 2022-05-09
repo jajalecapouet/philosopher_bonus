@@ -6,7 +6,7 @@
 /*   By: njaros <njaros@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:40:11 by njaros            #+#    #+#             */
-/*   Updated: 2022/05/09 10:42:16 by njaros           ###   ########lyon.fr   */
+/*   Updated: 2022/05/09 13:03:46 by njaros           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,10 @@ int	philo_bonus(t_law *law)
 	err = pthread_create(&meal_counter, NULL, meal_counter_handler, law);
 	if (err)
 		return (err);
-	err = lets_fork_the_phils(law, meal_counter);
+	err = lets_fork_the_phils(law);
 	if (err <= 0)
 	{
-		pthread_join(meal_counter, NULL);
+		pthread_detach(meal_counter);
 		while (++err <= 0)
 			kill(pid[-err], SIGINT);
 		return (12);
@@ -90,7 +90,7 @@ int	philo_bonus(t_law *law)
 	return (0);
 }
 
-int	lets_fork_the_phils(t_law *law, pthread_t meal_counter)
+int	lets_fork_the_phils(t_law *law)
 {
 	int		i;
 	int		ret;
@@ -110,7 +110,6 @@ int	lets_fork_the_phils(t_law *law, pthread_t meal_counter)
 	waitpid(-1, &ret, 0);
 	if (WIFEXITED(ret))
 	{
-		pthread_join(meal_counter, NULL);
 		while (--i >= 0)
 			kill(law->pid_adr[i], SIGINT);
 	}
